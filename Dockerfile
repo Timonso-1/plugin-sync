@@ -1,0 +1,24 @@
+FROM node:22-bookworm-slim AS deps
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+FROM node:22-bookworm-slim AS build
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV STANDALONE=1
+RUN npm run build
+
+FROM node:22-bookworm-slim
+WORKDIR /app
+ENV NODE_ENV=production \
+    DATA_DIR=/app/data \
+    PORT=3000 \
+    HOSTNAME=0.0.0.0
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+RUN mkdir -p /app/data
+VOLUME /app/data
+EXPOSE 3000
+CMD ["node", "server.js"]
