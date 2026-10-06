@@ -1,4 +1,4 @@
-import { History, Puzzle, Server, TriangleAlert } from "lucide-react";
+import { History, Puzzle, Server, TriangleAlert } from "@/components/icons";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { Badge, Card, Empty, Stat, StatusBadge } from "@/components/ui";
@@ -12,11 +12,13 @@ export default async function DashboardPage() {
   const session = await auth();
   const firstName = (session?.user?.name ?? "").split(" ")[0];
 
-  const stats = dashboardStats();
-  const recent = listDeployments(8);
-  const failing = pluginsWithErrors();
-  const servers = listServers();
-  const plugins = listPlugins();
+  const [stats, recent, failing, servers, plugins] = await Promise.all([
+    dashboardStats(),
+    listDeployments(8),
+    pluginsWithErrors(),
+    listServers(),
+    listPlugins(),
+  ]);
 
   return (
     <>

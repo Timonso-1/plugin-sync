@@ -1,4 +1,4 @@
-import { Server } from "lucide-react";
+import { Server } from "@/components/icons";
 import Link from "next/link";
 import { Card, Empty, PageHeader } from "@/components/ui";
 import { listServers } from "@/lib/db";
@@ -7,8 +7,8 @@ import DeployForm from "./deploy-form";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Deploy" };
 
-export default function DeployPage() {
-  const servers = listServers().map(({ id, name }) => ({ id, name }));
+export default async function DeployPage() {
+  const servers = (await listServers()).map(({ id, name }) => ({ id, name }));
 
   return (
     <>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronRight, ChevronsUpDown, LogOut, PanelLeft, PackageCheck } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronsUpDown, LogOut, PanelLeft, PackageCheck } from "@/components/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";

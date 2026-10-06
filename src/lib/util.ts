@@ -11,14 +11,14 @@ export function splitList(value: string | null | undefined): string[] {
 
 const TIME_ZONE = process.env.TZ_DISPLAY ?? "Europe/Berlin";
 
-/** SQLite liefert UTC als "YYYY-MM-DD HH:MM:SS" ohne Zeitzone. */
-export function parseSqliteDate(value: string): Date {
+/** Die Datenbank liefert UTC als "YYYY-MM-DD HH:MM:SS" ohne Zeitzone. */
+export function parseDbDate(value: string): Date {
   return new Date(`${value.replace(" ", "T")}Z`);
 }
 
 export function formatDateTime(value: string | null): string {
   if (!value) return "-";
-  return parseSqliteDate(value).toLocaleString("de-DE", {
+  return parseDbDate(value).toLocaleString("de-DE", {
     timeZone: TIME_ZONE,
     day: "2-digit",
     month: "2-digit",
@@ -30,7 +30,7 @@ export function formatDateTime(value: string | null): string {
 
 export function formatRelative(value: string | null): string {
   if (!value) return "nie";
-  const minutes = Math.round((Date.now() - parseSqliteDate(value).getTime()) / 60_000);
+  const minutes = Math.round((Date.now() - parseDbDate(value).getTime()) / 60_000);
   if (minutes < 1) return "gerade eben";
   if (minutes < 60) return `vor ${minutes} Min.`;
   const hours = Math.round(minutes / 60);

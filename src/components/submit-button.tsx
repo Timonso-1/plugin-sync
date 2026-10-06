@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "@/components/icons";
 import type { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 

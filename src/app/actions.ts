@@ -49,7 +49,7 @@ export async function deployUpload(_previous: DeployState, form: FormData): Prom
     jars.push({ meta, fileName: file.name, data });
   }
 
-  const servers = store.listServers().filter((server) => serverIds.includes(server.id));
+  const servers = (await store.listServers()).filter((server) => serverIds.includes(server.id));
   const results = await deployToServers(servers, jars, { restart: form.get("restart") === "on", trigger: "manual" });
 
   refreshAll();
@@ -63,23 +63,23 @@ export async function addServer(_previous: FormState, form: FormData): Promise<F
   const name = text(form, "name");
   const pelicanId = text(form, "pelican_id");
   if (!name || !pelicanId) return { error: "Name und Pelican-ID sind Pflicht." };
-  if (store.listServers().some((server) => server.pelican_id === pelicanId)) {
+  if ((await store.listServers()).some((server) => server.pelican_id === pelicanId)) {
     return { error: "Dieser Server ist bereits angelegt." };
   }
-  store.addServer(name, pelicanId, text(form, "plugin_dir") || "/plugins");
+  await store.addServer(name, pelicanId, text(form, "plugin_dir") || "/plugins");
   refreshAll();
   return { ok: `${name} hinzugefügt.` };
 }
 
 export async function importServer(name: string, pelicanId: string) {
   await requireUser();
-  store.addServer(name, pelicanId, "/plugins");
+  await store.addServer(name, pelicanId, "/plugins");
   refreshAll();
 }
 
 export async function removeServer(id: number) {
   await requireUser();
-  store.deleteServer(id);
+  await store.deleteServer(id);
   refreshAll();
 }
 
@@ -104,7 +104,7 @@ export async function addPlugin(_previous: FormState, form: FormData): Promise<F
     }
   }
 
-  store.addPlugin(
+  await store.addPlugin(
     {
       source,
       ref,
@@ -122,19 +122,19 @@ export async function addPlugin(_previous: FormState, form: FormData): Promise<F
 
 export async function savePluginServers(id: number, form: FormData) {
   await requireUser();
-  store.setPluginServers(id, ids(form, "servers"));
+  await store.setPluginServers(id, ids(form, "servers"));
   refreshAll();
 }
 
 export async function toggleAutoUpdate(id: number, enabled: boolean) {
   await requireUser();
-  store.setAutoUpdate(id, enabled);
+  await store.setAutoUpdate(id, enabled);
   refreshAll();
 }
 
 export async function removePlugin(id: number) {
   await requireUser();
-  store.deletePlugin(id);
+  await store.deletePlugin(id);
   refreshAll();
 }
 

@@ -23,7 +23,7 @@ export async function runUpdateCheck(): Promise<UpdateSummary> {
   globalForLock.pluginSyncUpdating = true;
 
   try {
-    const plugins = listPlugins().filter((plugin) => plugin.auto_update);
+    const plugins = (await listPlugins()).filter((plugin) => plugin.auto_update);
     const perServer = new Map<number, { server: ServerRow; jars: JarPackage[] }>();
     const pending: { pluginId: number; jar: JarPackage; version: string }[] = [];
     const failed: string[] = [];
@@ -32,13 +32,13 @@ export async function runUpdateCheck(): Promise<UpdateSummary> {
       try {
         const release = await resolveLatest(plugin);
         if (release.version === plugin.current_version) {
-          markChecked(plugin.id, null);
+          await markChecked(plugin.id, null);
           continue;
         }
 
-        const servers = serversForPlugin(plugin.id);
+        const servers = await serversForPlugin(plugin.id);
         if (!servers.length) {
-          markChecked(plugin.id, "Keine Server zugewiesen");
+          await markChecked(plugin.id, "Keine Server zugewiesen");
           continue;
         }
 
@@ -53,9 +53,9 @@ export async function runUpdateCheck(): Promise<UpdateSummary> {
           perServer.set(server.id, entry);
         }
         pending.push({ pluginId: plugin.id, jar, version: release.version });
-        markChecked(plugin.id, null);
+        await markChecked(plugin.id, null);
       } catch (error) {
-        markChecked(plugin.id, errorMessage(error));
+        await markChecked(plugin.id, errorMessage(error));
         failed.push(plugin.name ?? plugin.ref);
       }
     }
@@ -72,11 +72,11 @@ export async function runUpdateCheck(): Promise<UpdateSummary> {
     for (const { pluginId, jar, version } of pending) {
       const outcomes = results.flatMap((result) => result.outcomes.filter((outcome) => outcome.plugin === jar.meta.name));
       if (outcomes.every((outcome) => outcome.status !== "error")) {
-        setPluginRelease(pluginId, jar.meta.name, version);
+        await setPluginRelease(pluginId, jar.meta.name, version);
         updated.push(jar.meta.name);
       } else {
         // Version bleibt alt, damit der nächste Lauf es erneut versucht
-        markChecked(pluginId, "Deploy auf mindestens einem Server fehlgeschlagen, siehe Verlauf");
+        await markChecked(pluginId, "Deploy auf mindestens einem Server fehlgeschlagen, siehe Verlauf");
         failed.push(jar.meta.name);
       }
     }

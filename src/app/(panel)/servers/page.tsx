@@ -1,4 +1,4 @@
-import { Plus, Server, Trash2 } from "lucide-react";
+import { Plus, Server, Trash2 } from "@/components/icons";
 import { importServer, removeServer } from "@/app/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { Alert, Card, Empty, PageHeader } from "@/components/ui";
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Server" };
 
 export default async function ServersPage() {
-  const servers = listServers();
+  const servers = await listServers();
 
   let remote: PelicanServer[] = [];
   let remoteError: string | null = null;

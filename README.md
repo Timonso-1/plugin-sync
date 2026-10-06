@@ -13,12 +13,14 @@ Dateinamens.
 
 ## Voraussetzungen
 
-- Node.js 22.13 oder neuer (nutzt das eingebaute `node:sqlite`)
+- Node.js 20 oder neuer
+- MySQL 8 oder MariaDB 10.6+ (Tabellen werden beim ersten Zugriff automatisch angelegt)
 - Pelican **Client**-API-Key (Konto -> API-Schlüssel), kein Application-Key
 
 ## Lokal starten
 
 ```bash
+docker compose up -d         # optional: lokale MySQL-Datenbank
 npm install
 cp .env.example .env.local   # Werte eintragen
 npx auth secret              # schreibt AUTH_SECRET
@@ -42,7 +44,7 @@ OAuth-Callback-URLs:
 ## Deploy mit Coolify
 
 - Build Pack: Dockerfile
-- Persistentes Volume auf `/app/data` (SQLite-Datenbank)
+- MySQL als eigene Ressource in Coolify anlegen und deren interne URL als `DATABASE_URL` setzen
 - Umgebungsvariablen aus `.env.example` setzen, zusätzlich `AUTH_URL=https://<deine-domain>`
 - Callback-URLs in GitHub und Discord auf die Domain umstellen
 

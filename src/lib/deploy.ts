@@ -55,8 +55,9 @@ export function deployToServers(servers: ServerRow[], jars: JarPackage[], option
 async function deployToServer(server: ServerRow, jars: JarPackage[], options: DeployOptions): Promise<ServerResult> {
   const result: ServerResult = { serverId: server.id, server: server.name, outcomes: [], restarted: false };
 
-  const record = (jar: JarPackage, status: OutcomeStatus, extra: { removed?: string[]; message?: string } = {}) => {
-    logDeployment({
+  const record = async (jar: JarPackage, status: OutcomeStatus, extra: { removed?: string[]; message?: string } = {}) => {
+    result.outcomes.push({ plugin: jar.meta.name, status, message: extra.message });
+    await logDeployment({
       server_id: server.id,
       server_name: server.name,
       plugin_name: jar.meta.name,
@@ -66,8 +67,7 @@ async function deployToServer(server: ServerRow, jars: JarPackage[], options: De
       status,
       message: extra.message ?? null,
       trigger: options.trigger,
-    });
-    result.outcomes.push({ plugin: jar.meta.name, status, message: extra.message });
+    }).catch((error) => console.error("[deploy] Verlauf konnte nicht gespeichert werden:", error));
   };
 
   let installed: { file: PelicanFile; meta: PluginMeta | null }[];
@@ -78,7 +78,7 @@ async function deployToServer(server: ServerRow, jars: JarPackage[], options: De
     installed = await Promise.all(files.map(async (file) => ({ file, meta: await existingMeta(server, file) })));
   } catch (error) {
     result.error = errorMessage(error);
-    for (const jar of jars) record(jar, "error", { message: `Plugin-Ordner nicht lesbar: ${result.error}` });
+    for (const jar of jars) await record(jar, "error", { message: `Plugin-Ordner nicht lesbar: ${result.error}` });
     return result;
   }
 
@@ -91,7 +91,7 @@ async function deployToServer(server: ServerRow, jars: JarPackage[], options: De
       matches[0].meta?.version === jar.meta.version &&
       matches[0].file.size === jar.data.length;
     if (identical) {
-      record(jar, "skipped", { message: "Gleiche Version bereits installiert" });
+      await record(jar, "skipped", { message: "Gleiche Version bereits installiert" });
       continue;
     }
 
@@ -99,9 +99,9 @@ async function deployToServer(server: ServerRow, jars: JarPackage[], options: De
     try {
       if (toDelete.length) await deleteFiles(server.pelican_id, server.plugin_dir, toDelete);
       await uploadFile(server.pelican_id, server.plugin_dir, jar.fileName, jar.data);
-      record(jar, "success", { removed: toDelete });
+      await record(jar, "success", { removed: toDelete });
     } catch (error) {
-      record(jar, "error", { removed: toDelete, message: errorMessage(error) });
+      await record(jar, "error", { removed: toDelete, message: errorMessage(error) });
     }
   }
 

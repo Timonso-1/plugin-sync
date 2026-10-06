@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus } from "@/components/icons";
 import { useActionState, useEffect, useRef } from "react";
 import { addServer, type FormState } from "@/app/actions";
 import { SubmitButton } from "@/components/submit-button";

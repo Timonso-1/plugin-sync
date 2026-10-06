@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus } from "@/components/icons";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { addPlugin, type FormState } from "@/app/actions";
 import { GithubIcon } from "@/components/brand-icons";

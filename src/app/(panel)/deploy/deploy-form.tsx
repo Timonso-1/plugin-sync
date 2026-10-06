@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, FileArchive, LoaderCircle, Power, RotateCw, Upload, X } from "lucide-react";
+import { Check, FileArchive, LoaderCircle, Power, RotateCw, Upload, X } from "@/components/icons";
 import { useActionState, useRef, useState, type DragEvent } from "react";
 import { deployUpload, type DeployState } from "@/app/actions";
 import { Alert, Badge, Card, StatusBadge } from "@/components/ui";

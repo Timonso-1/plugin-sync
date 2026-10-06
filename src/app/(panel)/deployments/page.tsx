@@ -1,4 +1,4 @@
-import { History } from "lucide-react";
+import { History } from "@/components/icons";
 import { Badge, Card, Empty, PageHeader, StatusBadge } from "@/components/ui";
 import { listDeployments } from "@/lib/db";
 import { formatDateTime } from "@/lib/util";
@@ -6,8 +6,8 @@ import { formatDateTime } from "@/lib/util";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Verlauf" };
 
-export default function DeploymentsPage() {
-  const deployments = listDeployments(300);
+export default async function DeploymentsPage() {
+  const deployments = await listDeployments(300);
 
   return (
     <>

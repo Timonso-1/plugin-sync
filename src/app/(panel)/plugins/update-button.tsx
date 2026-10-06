@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderCircle, RefreshCw } from "lucide-react";
+import { LoaderCircle, RefreshCw } from "@/components/icons";
 import { useActionState } from "react";
 import { checkUpdates, type UpdateState } from "@/app/actions";
 

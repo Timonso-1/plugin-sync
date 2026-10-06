@@ -13,12 +13,9 @@ RUN npm run build
 FROM node:22-bookworm-slim
 WORKDIR /app
 ENV NODE_ENV=production \
-    DATA_DIR=/app/data \
     PORT=3000 \
     HOSTNAME=0.0.0.0
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
-RUN mkdir -p /app/data
-VOLUME /app/data
 EXPOSE 3000
 CMD ["node", "server.js"]

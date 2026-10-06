@@ -1,4 +1,4 @@
-import { History, PackageCheck, RefreshCw, ShieldCheck, Upload } from "lucide-react";
+import { History, PackageCheck, RefreshCw, ShieldCheck, Upload } from "@/components/icons";
 import { redirect } from "next/navigation";
 import { auth, signIn } from "@/auth";
 import { DiscordIcon, GithubIcon } from "@/components/brand-icons";

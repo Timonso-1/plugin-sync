@@ -1,4 +1,5 @@
-import { History, LayoutDashboard, Puzzle, Server, Upload, type LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { History, LayoutDashboard, Puzzle, Server, Upload } from "./icons";
 
 export interface NavItem {
   href: string;

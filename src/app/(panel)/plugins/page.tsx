@@ -1,8 +1,8 @@
-import { Puzzle, Trash2 } from "lucide-react";
+import { Puzzle, Trash2 } from "@/components/icons";
 import { removePlugin, savePluginServers, toggleAutoUpdate } from "@/app/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { Badge, Card, Empty, PageHeader } from "@/components/ui";
-import { listPlugins, listServers, pluginServerIds } from "@/lib/db";
+import { listPlugins, listServers, pluginServerMap } from "@/lib/db";
 import { formatRelative } from "@/lib/util";
 import AddPluginForm from "./add-plugin-form";
 import UpdateButton from "./update-button";
@@ -10,9 +10,8 @@ import UpdateButton from "./update-button";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Plugins" };
 
-export default function PluginsPage() {
-  const plugins = listPlugins();
-  const servers = listServers();
+export default async function PluginsPage() {
+  const [plugins, servers, assignments] = await Promise.all([listPlugins(), listServers(), pluginServerMap()]);
 
   return (
     <>
@@ -31,7 +30,7 @@ export default function PluginsPage() {
           ) : (
             <ul className="list">
               {plugins.map((plugin) => {
-                const assigned = new Set(pluginServerIds(plugin.id));
+                const assigned = assignments.get(plugin.id) ?? new Set<number>();
                 return (
                   <li key={plugin.id} className="plugin-row">
                     <div className="plugin-head">
